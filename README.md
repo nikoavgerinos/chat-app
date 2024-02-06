@@ -1,3 +1,8 @@
+<p align="center">
+  <img src="img/demo-start-screen.png" width="400" alt="Image 1">
+  <img src="img/demo-chat-screen.png" width="400" alt="Image 2">
+</p>
+
 # 📱 React Native Mobile Chat App
 
 Welcome to the React Native Mobile Chat App project! This repository hosts a robust chat application for mobile devices built with React Native, Expo, and Google Firestore Database. The app allows real-time conversations, image sharing, and location sharing.
@@ -80,9 +85,9 @@ npm install
 
 - Install the Firebase package by running:
 
-  ```
-  npm install firebase
-  ```
+```
+npm install firebase
+```
 
 - Initialize Firebase in your project by copying and pasting the provided Firebase configuration into the `App.js` file of the downloaded repository.
 
@@ -94,7 +99,7 @@ npm install
 10. **Run the App:** Finally, run the app by executing the following command in your terminal:
 
 ```
-expo start
+expo start (or npm start)
 ```
 
 Follow the instructions to access the app via the iOS Simulator or Android Emulator.
