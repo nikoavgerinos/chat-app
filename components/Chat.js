@@ -8,9 +8,11 @@ import MapView from 'react-native-maps';
 
 
 
-const Chat = ({ route, navigation, db, isConnected }) => {
+const Chat = ({ route, navigation, db, isConnected, storage }) => {
     const { name, background, userID } = route.params;
     const [messages, setMessages] = useState([]);
+
+    // Function to handle sending messages
     const onSend = (newMessages) => {
         addDoc(collection(db, "messages"), newMessages[0])
     }
@@ -28,7 +30,9 @@ const Chat = ({ route, navigation, db, isConnected }) => {
                 }
             }}
         />
-    }
+    };
+
+    // Customize input toolbar based on network connection
     const renderInputToolbar = (props) => {
         if (isConnected) return <InputToolbar {...props} />;
         else return null;
@@ -36,13 +40,12 @@ const Chat = ({ route, navigation, db, isConnected }) => {
 
 
 
-    // Set user name
+    // Set user name in the navigation header
     useEffect(() => {
         navigation.setOptions({ title: name });
     }, []);
 
-    // Messages database
-
+    // Messages database and real-time updates
     let unsubMessages;
 
     useEffect(() => {
@@ -68,6 +71,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
         }
     }, [isConnected]);
 
+    // Load cached messages from AsyncStorage
     const loadCachedMessages = async () => {
         const cachedMessageHistory = await AsyncStorage.getItem("chat_messages");
         if (cachedMessageHistory) {
@@ -75,7 +79,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
         }
     }
 
-
+    // Cache the message history in AsyncStorage
     const cachedMessageHistory = async (messagesToCache) => {
         try {
             await AsyncStorage.setItem('chat_messages', JSON.stringify(messagesToCache));
@@ -84,10 +88,12 @@ const Chat = ({ route, navigation, db, isConnected }) => {
         }
     }
 
+    // Render custom actions component
     const renderCustomActions = (props) => {
-        return <CustomActions {...props} />;
+        return <CustomActions storage={storage} {...props} />;
     }
 
+    // Render custom view for displaying map location
     const renderCustomView = (props) => {
         const { currentMessage } = props;
         if (currentMessage.location) {

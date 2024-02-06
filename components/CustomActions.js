@@ -2,10 +2,13 @@ import { TouchableOpacity, Text, View, StyleSheet, Alert } from "react-native";
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
-const CustomActions = ({ wrapperStyle, iconTextStyle, onSend }) => {
+
+const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID }) => {
     const actionSheet = useActionSheet();
 
+    // Function to handle actions when the action button is pressed
     const onActionPress = () => {
         const options = ['Choose Library', 'Take Photo', 'Send Location', 'Cancel'];
         const cancelButtonIndex = options.length - 1;
@@ -31,6 +34,51 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend }) => {
         );
     };
 
+    //IMAGES
+
+    // Function to upload and send an image
+    const uploadAndSendImage = async (imageURI) => {
+        const uniqueRefString = generateReference(imageURI);
+        const newUploadRef = ref(storage, uniqueRefString);
+        const response = await fetch(imageURI);
+        const blob = await response.blob();
+        uploadBytes(newUploadRef, blob).then(async (snapshot) => {
+            const imageURL = await getDownloadURL(snapshot.ref)
+            onSend({ image: imageURL })
+        });
+    }
+
+    // Function to pick an image from the device's library
+    const pickImage = async () => {
+        let permissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (permissions?.granted) {
+            let result = await ImagePicker.launchImageLibraryAsync();
+            if (!result.canceled) await uploadAndSendImage(result.assets[0].uri);
+            else Alert.alert("Permissions haven't been granted.");
+        }
+    }
+
+    // Function to take a photo using the device's camera
+    const takePhoto = async () => {
+        let permissions = await ImagePicker.requestCameraPermissionsAsync();
+        if (permissions?.granted) {
+            let result = await ImagePicker.launchCameraAsync();
+            if (!result.canceled) await uploadAndSendImage(result.assets[0].uri);
+            else Alert.alert("Permissions haven't been granted.");
+        }
+    }
+
+    // Function to generate a reference for the uploaded image
+    const generateReference = (uri) => {
+        const timeStamp = (new Date()).getTime();
+        const imageName = uri.split("/")[uri.split("/").length - 1];
+        return `${userID}-${timeStamp}-${imageName}`;
+    }
+
+
+    // LOCATION
+
+    // Function to get and send the user's current location
     const getLocation = async () => {
         let permissions = await Location.requestForegroundPermissionsAsync();
         if (permissions?.granted) {
@@ -45,6 +93,8 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend }) => {
             } else Alert.alert("Error occurred while fetching location");
         } else Alert.alert("Permissions haven't been granted.");
     }
+
+
 
 
     return (
@@ -73,7 +123,7 @@ const styles = StyleSheet.create({
     iconText: {
         color: '#b2b2b2',
         fontWeight: 'bold',
-        fontSize: 10,
+        fontSize: 15,
         backgroundColor: 'transparent',
         textAlign: 'center',
     },
