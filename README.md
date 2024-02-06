@@ -1,11 +1,11 @@
+# 📱 React Native Mobile Chat App
+
+Welcome to the React Native Mobile Chat App project! This repository hosts a robust chat application for mobile devices built with React Native, Expo, and Google Firestore Database. The app allows real-time conversations, image sharing, and location sharing.
+
 <p align="center">
   <img src="img/demo-start-screen.png" width="400" alt="Image 1">
   <img src="img/demo-chat-screen.png" width="400" alt="Image 2">
 </p>
-
-# 📱 React Native Mobile Chat App
-
-Welcome to the React Native Mobile Chat App project! This repository hosts a robust chat application for mobile devices built with React Native, Expo, and Google Firestore Database. The app allows real-time conversations, image sharing, and location sharing.
 
 ## 📝 Project Description
 
