@@ -3,7 +3,8 @@ import { StyleSheet, View, KeyboardAvoidingView, Platform } from 'react-native';
 import { GiftedChat, Bubble, InputToolbar, renderActions } from "react-native-gifted-chat";
 import { collection, addDoc, onSnapshot, orderBy, query } from "firebase/firestore";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import CostumActions from "./CostumActions";
+import CustomActions from "./CustomActions";
+import MapView from 'react-native-maps';
 
 
 
@@ -83,8 +84,33 @@ const Chat = ({ route, navigation, db, isConnected }) => {
         }
     }
 
-    const renderCostumActions = (props) => {
-        return <CostumActions {...props} />;
+    const renderCustomActions = (props) => {
+        return <CustomActions {...props} />;
+    }
+
+    const renderCustomView = (props) => {
+        const { currentMessage } = props;
+        if (currentMessage.location) {
+            return (
+                <MapView
+                    style={{
+                        width: 150,
+                        height: 100,
+                        borderRadius: 13,
+                        margin: 3
+                    }}
+                    region={{
+                        latitude: currentMessage.location.latitude,
+                        longitude: currentMessage.location.longitude,
+                        latitudeDelta: 0.0922,
+                        longitudeDelta: 0.421,
+                    }}
+                />
+
+
+            );
+            return null;
+        }
     }
 
     return (
@@ -95,7 +121,8 @@ const Chat = ({ route, navigation, db, isConnected }) => {
                 renderBubble={renderBubble}
                 renderInputToolbar={renderInputToolbar}
                 onSend={messages => onSend(messages)}
-                renderActions={renderCostumActions}
+                renderActions={renderCustomActions}
+                renderCustomView={renderCustomView}
                 user={{
                     _id: userID,
                     name
